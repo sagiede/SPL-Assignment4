@@ -1,13 +1,22 @@
 import sqlite3
+import os
 dbcon = sqlite3.connect('world.db')
 
-with dbcon:
-    cursor = dbcon.cursor()
-    cursor.execute("""CREATE TABLE tasks(
-                    id INTEGER PRIMARY KEY, 
-                    task_name TEXT NOT NULL, 
-                    worker_id INTEGER REFERENCES workers(id), 
-                    time_to_make INTEGER NOT NULL, 
-                    resource_name TEXT NOT NULL, 
-                    resource_amount INTEGER NOT NULL
-                   )""")
+def main():
+    with dbcon:
+        cursor = dbcon.cursor()
+        cursor.execute("SELECT * FROM tasks")
+        tasks_list = cursor.fetchall()
+        cursor.execute("SELECT * FROM workers")
+        workers_list = cursor.fetchall()
+
+        #while os.path.isfile('world.db') and len(tasks_list) > 0:
+           # for worker in workers_list:
+           #     if worker["status"] == "idle":
+
+
+
+
+
+if __name__ == '__main__':
+    main()
