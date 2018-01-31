@@ -7,7 +7,7 @@ dbcon = sqlite3.connect('world.db')
 
 
 def main(args):
-    if not isDatabaseExist:
+    if not isDatabaseExist and args[1] is not None:
         with dbcon:
             cursor = dbcon.cursor()
             cursor.execute("""CREATE TABLE tasks(
@@ -29,19 +29,17 @@ def main(args):
                        )""")
         config_name = args[1]
         with open(config_name) as input_file:
-            task_id = 1
             for line in input_file:
-                data_list = line.split(',')
+                data_list = line.rstrip('\n').split(',')
                 if len(data_list) == 2:  # resources case
                     cursor.execute("INSERT INTO resources VALUES (?,?)", [data_list[0], data_list[1]])
-                if len(data_list) == 3:  # workers case
+                elif len(data_list) == 3:  # workers case
                     cursor.execute("INSERT INTO workers VALUES (?,?,?)",
                                    [data_list[1], data_list[2], 'idle'])
-                if len(data_list) == 5:  # tasks case
-                    cursor.execute("INSERT INTO tasks VALUES (?,?,?,?,?)",
-                                   [task_id, data_list[0], data_list[1], data_list[4], data_list[2], data_list[3]])
-                    task_id = task_id + 1
-
+                elif len(data_list) == 5:  # tasks case
+                    cursor.execute("INSERT INTO tasks VALUES (?,?,?,?,?,?)",
+                                   [None, data_list[0], data_list[1], data_list[4], data_list[2], data_list[3]])
+        dbcon.commit()
 
 if __name__ == '__main__':
     main(sys.argv)
